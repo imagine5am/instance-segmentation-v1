@@ -105,7 +105,7 @@ class Dataset(utils.Dataset):
                 # rectangles.append(annotation['bbox']) # x, y, w, h
                 class_ids.append(annotation['category_id'])
             
-        
+            print(image.keys)
             self.add_image(
              "object",
              image_id=id,  # use file name as a unique image id
