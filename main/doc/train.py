@@ -79,13 +79,13 @@ class Dataset(utils.Dataset):
         '''
         # Train or validation dataset?
         assert subset in ["train", "val","test"]    
-        dataset_dir = os.path.join(dataset_dir, subset)
+        subset_dir = os.path.join(dataset_dir, subset)
     
-        json_obj = json.load(open(subset+'.json', 'r'))
+        json_obj = json.load(open(os.path.join(dataset_dir, subset+'.json'), 'r'))
         
         images = {}
         for image in json_obj['images']:
-            images[image['id']] = {'file_name': os.path.join(dataset_dir, image['file_name']), 
+            images[image['id']] = {'file_name': os.path.join(subset_dir, image['file_name']), 
                                    'annotations': [],
                                    'height': image['height'], 
                                    'width': image['width']
