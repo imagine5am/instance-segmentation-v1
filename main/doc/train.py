@@ -26,6 +26,8 @@ sys.path.append(ROOT_DIR)
 from mrcnn.config import Config
 from mrcnn import model as modellib, utils
 
+from tqdm import tqdm
+
 COCO_WEIGHTS_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
 # Directory to save logs and model checkpoints, if not provided
@@ -76,17 +78,25 @@ class Dataset(utils.Dataset):
         }
         '''
         # Train or validation dataset?
-        assert subset in ["train", "val","test"]
+        assert subset in ["train", "val","test"]    
         dataset_dir = os.path.join(dataset_dir, subset)
-
-        annotations = json.load(open(subset+'.json', 'r'))
+    
+        json_obj = json.load(open(subset+'.json', 'r'))
+        
         images = {}
-        for image in annotations['images']:
-            images[image['id']] = {'file_name': os.path.join(dataset_dir, image['file_name']), 'annotations': []}
-        for ann in annotations['annotations']:
+        for image in json_obj['images']:
+            images[image['id']] = {'file_name': os.path.join(dataset_dir, image['file_name']), 
+                                   'annotations': [],
+                                   'height': image['height'], 
+                                   'width': image['width']
+                                   }
+        for ann in json_obj['annotations']:
             images[ann['image_id']]['annotations'].append(ann)
             
-        for i, (id, image) in enumerate(images.items()):
+        for _, (id, image) in enumerate(tqdm(images.items())):
+            if not os.path.isfile(image['file_name']):
+                continue
+            
             polygons = []
             # rectangles = []
             class_ids = []
@@ -95,20 +105,13 @@ class Dataset(utils.Dataset):
                 # rectangles.append(annotation['bbox']) # x, y, w, h
                 class_ids.append(annotation['category_id'])
             
-            try:
-                im = skimage.io.imread(image['filename'])
-            except Exception:
-                print(image_path)
-                print('Exception')
-                continue
-
-            height, width = im.shape[:2]    
         
             self.add_image(
              "object",
              image_id=id,  # use file name as a unique image id
              path=image['filename'],
-             width=width, height=height,
+             width=image['width'], 
+             height=image['height'],
              polygons=polygons,
              num_ids=class_ids)
 
