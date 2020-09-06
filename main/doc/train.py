@@ -92,7 +92,8 @@ class Dataset(utils.Dataset):
                                    }
         for ann in json_obj['annotations']:
             images[ann['image_id']]['annotations'].append(ann)
-            
+
+        image_count = 0
         for _, (id, image) in enumerate(tqdm(images.items())):
             if not os.path.isfile(image['file_name']):
                 continue
@@ -113,6 +114,10 @@ class Dataset(utils.Dataset):
              height=image['height'],
              polygons=polygons,
              num_ids=class_ids)
+            
+            image_count += 1
+            
+        print('No. of images in ' + subset +' subset: ' + str(image_count))
 
     
     def load_mask(self, image_id):
@@ -170,8 +175,6 @@ def train(model):
     dataset_val = Dataset()
     dataset_val.load_data(args.dataset, "val")
     dataset_val.prepare()
-
-
 
     # Training - Stage 1
     # Finetune task specific network heads
