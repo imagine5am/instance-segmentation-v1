@@ -37,6 +37,8 @@ DEFAULT_LOGS_DIR = os.path.join(ROOT_DIR, "logs")
 ############################################################
 #  Configurations
 ############################################################
+# No. of images in train subset: 47958
+# No. of images in val subset: 11245
 
 class Config(Config):
     """Configuration for training on the doc  dataset.
@@ -49,9 +51,9 @@ class Config(Config):
     # Number of classes (including background)
     NUM_CLASSES = 6
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 500
+    STEPS_PER_EPOCH = 500   # steps_per_epoch * batch_size = number_of_rows_in_train_data
     USE_MINI_MASK = False
-    WEIGHT_DECAY=0.001
+    WEIGHT_DECAY = 0.001
     # Skip detections with < 50% confidence
     DETECTION_MIN_CONFIDENCE = 0.5
 
@@ -68,15 +70,9 @@ class Dataset(utils.Dataset):
         self.add_class("object", 3, "LST")
         self.add_class("object", 4, "TAB")
         self.add_class("object", 5, "FIG")
-        '''
-        categories = {
-            1: 'text',
-            2: 'title',
-            3: 'list',
-            4: 'table',
-            5: 'figure'
-        }
-        '''
+        
+        # categories = {1: 'text', 2: 'title', 3: 'list', 4: 'table', 5: 'figure'}
+        
         # Train or validation dataset?
         assert subset in ["train", "val","test"]    
         subset_dir = os.path.join(dataset_dir, subset)
@@ -166,6 +162,8 @@ class Dataset(utils.Dataset):
 
 def train(model):
     """Train the model."""
+    # epochs = [30, 50, 65]
+    epochs = [1, 1, 1]
     # Training dataset.
     dataset_train = Dataset()
     dataset_train.load_data(args.dataset, "train")
@@ -181,7 +179,7 @@ def train(model):
     print("Training network heads")
     model.train(dataset_train, dataset_val,
                         learning_rate=config.LEARNING_RATE,
-                        epochs=30,
+                        epochs=epochs[0],
                         layers='heads')
 
     # Training - Stage 2
@@ -189,7 +187,7 @@ def train(model):
     print("Fine tune Resnet stage 4 and up")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=50,
+                epochs=epochs[1],
                 layers='4+')
 
     # Training - Stage 3
@@ -197,7 +195,7 @@ def train(model):
     print("Fine tune all layers")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE / 10,
-                epochs=65,
+                epochs=epochs[2],
                 layers='all')
 
 
