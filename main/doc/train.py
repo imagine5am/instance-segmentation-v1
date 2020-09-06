@@ -51,7 +51,7 @@ class Config(Config):
     # Number of classes (including background)
     NUM_CLASSES = 6
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 500   # steps_per_epoch * batch_size = number_of_rows_in_train_data
+    STEPS_PER_EPOCH = 10000   # steps_per_epoch * batch_size = number_of_rows_in_train_data
     VALIDATION_STEPS = 80
     USE_MINI_MASK = False
     WEIGHT_DECAY = 0.001
@@ -163,8 +163,7 @@ class Dataset(utils.Dataset):
 
 def train(model):
     """Train the model."""
-    # epochs = [30, 50, 65]
-    epochs = [1, 1, 1]
+    epochs = [30, 50, 65]
     # Training dataset.
     dataset_train = Dataset()
     dataset_train.load_data(args.dataset, "train")
