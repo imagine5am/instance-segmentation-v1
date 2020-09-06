@@ -47,7 +47,7 @@ class Config(Config):
     """
     NAME = "object"
     GPU_COUNT = 1
-    IMAGES_PER_GPU = 4
+    IMAGES_PER_GPU = 2
     # Number of classes (including background)
     NUM_CLASSES = 6
     # Number of training steps per epoch
