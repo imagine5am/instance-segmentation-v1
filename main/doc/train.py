@@ -46,12 +46,13 @@ class Config(Config):
     Go to config.py in mrcnn if you want to change other hyperparameters 
     """
     NAME = "object"
-    GPU_COUNT=1
-    IMAGES_PER_GPU = 1
+    GPU_COUNT = 1
+    IMAGES_PER_GPU = 3
     # Number of classes (including background)
     NUM_CLASSES = 6
     # Number of training steps per epoch
     STEPS_PER_EPOCH = 500   # steps_per_epoch * batch_size = number_of_rows_in_train_data
+    VALIDATION_STEPS = 80
     USE_MINI_MASK = False
     WEIGHT_DECAY = 0.001
     # Skip detections with < 50% confidence
