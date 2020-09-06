@@ -105,11 +105,10 @@ class Dataset(utils.Dataset):
                 # rectangles.append(annotation['bbox']) # x, y, w, h
                 class_ids.append(annotation['category_id'])
             
-            print(image.keys)
             self.add_image(
              "object",
              image_id=id,  # use file name as a unique image id
-             path=image['filename'],
+             path=image['file_name'],
              width=image['width'], 
              height=image['height'],
              polygons=polygons,
@@ -137,7 +136,7 @@ class Dataset(utils.Dataset):
         for i, poly in enumerate(info["polygons"]):
             # Get indexes of pixels inside the polygon and set them to 1
             try:
-                rr, cc = skimage.draw.polygon(poly[0::2], poly[1::2])
+                rr, cc = skimage.draw.polygon(poly[1::2], poly[0::2])
             except Exception:
                 continue
             try:
